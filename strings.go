@@ -60,10 +60,67 @@ func Trim(str string, cutset string) string {
 	return strings.Trim(str, " \n\r\t"+cutset)
 }
 
-func LTrim(str string) string {
-	return strings.TrimLeft(str, " \n\r\t")
+func LTrim(str string, cutset string) string {
+	return strings.TrimLeft(str, " \n\r\t"+cutset)
 }
 
-func RTrim(str string) string {
-	return strings.TrimRight(str, " \n\r\t")
+func RTrim(str string, cutset string) string {
+	return strings.TrimRight(str, " \n\r\t"+cutset)
+}
+
+func StrToUpper(str string) string {
+	return strings.ToUpper(str)
+}
+
+func StrToLower(str string) string {
+	return strings.ToLower(str)
+}
+
+func StrReplace(from interface{}, to interface{}, str string, n int) string {
+	var (
+		f   string
+		fok bool
+		t   string
+		tok bool
+	)
+
+	f, fok = from.(string)
+	t, tok = to.(string)
+
+	if fok && tok {
+		return strings.Replace(str, f, t, n)
+	}
+
+	if !fok && tok {
+		if farr, tmpOk := from.([]string); tmpOk {
+			for _, tmpFromStr := range farr {
+				str = strings.Replace(str, tmpFromStr, t, n)
+			}
+			return str
+		}
+	}
+
+	if fok && !tok {
+		if tarr, tmpOk := to.([]string); tmpOk {
+			for _, tmpToStr := range tarr {
+				str = strings.Replace(str, f, tmpToStr, n)
+			}
+			return str
+		}
+	}
+
+	if !fok && !tok {
+		farr, fTmpOk := from.([]string)
+		tarr, tTmpOk := to.([]string)
+		if fTmpOk && tTmpOk {
+			for i, tmpFromStr := range farr {
+				tmpToStr := tarr[i]
+				str = strings.Replace(str, tmpFromStr, tmpToStr, n)
+			}
+
+			return str
+		}
+	}
+
+	return str
 }
